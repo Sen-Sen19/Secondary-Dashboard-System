@@ -1,0 +1,48 @@
+Array
+(
+    [MIBDIRS] => C:/xampp/php/extras/mibs
+    [MYSQL_HOME] => \xampp\mysql\bin
+    [OPENSSL_CONF] => C:/xampp/apache/bin/openssl.cnf
+    [PHP_PEAR_SYSCONF_DIR] => \xampp\php
+    [PHPRC] => \xampp\php
+    [TMP] => \xampp\tmp
+    [HTTP_HOST] => 172.25.114.229:8080
+    [HTTP_CONNECTION] => keep-alive
+    [CONTENT_LENGTH] => 117
+    [HTTP_USER_AGENT] => Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0
+    [CONTENT_TYPE] => application/x-www-form-urlencoded
+    [HTTP_ACCEPT] => */*
+    [HTTP_ORIGIN] => http://172.25.114.229:8080
+    [HTTP_REFERER] => http://172.25.114.229:8080/secondary_system/page/user/section.php
+    [HTTP_ACCEPT_ENCODING] => gzip, deflate
+    [HTTP_ACCEPT_LANGUAGE] => en-US,en;q=0.9,fil;q=0.8
+    [HTTP_COOKIE] => secondary_system=fkcfop8h6tbghg2e73pa5v26h7; PHPSESSID=0iehdru47b02fiahsnhbgcee9k
+    [PATH] => C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Microsoft SQL Server\160\Tools\Binn\;C:\Program Files\Microsoft SQL Server\160\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn\;C:\xampp\php\;C:\oracle\instantclient_21_17;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\IT SEN\AppData\Local\Microsoft\WindowsApps;C:\Users\IT SEN\AppData\Local\Programs\Microsoft VS Code\bin;C:\ProgramData\IT SEN\GitHubDesktop\bin;C:\Users\IT SEN\AppData\Local\GitHubDesktop\bin;C:\Users\IT SEN\AppData\Roaming\npm
+    [SystemRoot] => C:\WINDOWS
+    [COMSPEC] => C:\WINDOWS\system32\cmd.exe
+    [PATHEXT] => .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+    [WINDIR] => C:\WINDOWS
+    [SERVER_SIGNATURE] => <address>Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12 Server at 172.25.114.229 Port 8080</address>
+
+    [SERVER_SOFTWARE] => Apache/2.4.58 (Win64) OpenSSL/3.1.3 PHP/8.2.12
+    [SERVER_NAME] => 172.25.114.229
+    [SERVER_ADDR] => 172.25.114.229
+    [SERVER_PORT] => 8080
+    [REMOTE_ADDR] => 172.25.114.229
+    [DOCUMENT_ROOT] => C:/xampp/htdocs
+    [REQUEST_SCHEME] => http
+    [CONTEXT_PREFIX] => 
+    [CONTEXT_DOCUMENT_ROOT] => C:/xampp/htdocs
+    [SERVER_ADMIN] => postmaster@localhost
+    [SCRIPT_FILENAME] => C:/xampp/htdocs/secondary_system/process/update_value.php
+    [REMOTE_PORT] => 56567
+    [GATEWAY_INTERFACE] => CGI/1.1
+    [SERVER_PROTOCOL] => HTTP/1.1
+    [REQUEST_METHOD] => POST
+    [QUERY_STRING] => 
+    [REQUEST_URI] => /secondary_system/process/update_value.php
+    [SCRIPT_NAME] => /secondary_system/process/update_value.php
+    [PHP_SELF] => /secondary_system/process/update_value.php
+    [REQUEST_TIME_FLOAT] => 1747978708.5249
+    [REQUEST_TIME] => 1747978708
+)

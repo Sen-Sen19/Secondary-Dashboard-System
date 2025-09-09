@@ -1,0 +1,32 @@
+SELECT *
+FROM Combined
+WHERE section = '1'
+ORDER BY 
+    CASE section
+        WHEN 'Overall' THEN 0
+        WHEN '1' THEN 1
+        WHEN '2' THEN 2
+        WHEN '3' THEN 3
+        WHEN '3.1' THEN 3.1
+        WHEN '4' THEN 4
+        WHEN '5' THEN 5
+        WHEN '6' THEN 6
+        WHEN '7' THEN 7
+        WHEN '8' THEN 8
+        WHEN '9' THEN 9
+        ELSE 10
+    END,
+    CASE general_process
+        WHEN 'WIP (Previous day)' THEN 1
+        WHEN 'Plan Output per day' THEN 2
+        WHEN 'Target Output (WIP+Plan)' THEN 3
+        WHEN 'Machine Count' THEN 4
+        WHEN 'Target JPH' THEN 5
+        WHEN 'Actual Output' THEN 6
+        WHEN 'Actual JPH' THEN 7
+        WHEN 'Actual WT' THEN 8
+        WHEN 'WIP' THEN 9
+        WHEN 'Plan Per Machine' THEN 10
+        ELSE 11
+    END,
+    general_process DESC;

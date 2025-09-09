@@ -1,0 +1,30 @@
+Request Params: Array
+(
+    [offset] => 0
+    [limit] => 200
+)
+
+Count SQL: SELECT COUNT(*) AS total FROM [secondary_dashboard_db].[dbo].[manpower] 
+Params: Array
+(
+)
+
+Data SQL: 
+    SELECT [emp_no]
+          ,[full_name]
+          ,[Skill_level]
+          ,[section]
+          ,[process]
+          ,[machine_no]
+          ,[shift]
+    FROM [secondary_dashboard_db].[dbo].[manpower]
+    
+    ORDER BY [emp_no]
+    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;
+
+Params: Array
+(
+    [0] => 0
+    [1] => 200
+)
+

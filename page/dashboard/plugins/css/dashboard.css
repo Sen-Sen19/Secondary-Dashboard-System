@@ -1,0 +1,82 @@
+ .navbar {
+  background-color: rgb(58, 58, 58);
+
+}
+
+    .navbar-brand img {
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .btn-back {
+      color: white;
+      border-color: white;
+    }
+
+    .btn-back:hover {
+      background-color: black;
+      color: #121212;
+    }
+    #filterChathead {
+  position: fixed;
+  top: 20%;
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  background-color: #343a40;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+  #filterChathead i {
+    font-size: 20px;
+    color: white;
+  }
+
+  #filterPanel {
+    position: fixed;
+    z-index: 999;
+    background-color: #343a40;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    display: none;
+    max-width: 90vw;
+    cursor: move;
+  }
+
+  .bounce {
+    animation: bounce 0.3s ease;
+  }
+
+  @keyframes bounce {
+    0% { transform: translateX(0); }
+    40% { transform: translateX(-10px); }
+    70% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+  }
+
+  
+    .division-bar {
+      background-color:rgb(146, 146, 146);
+      height: 60px;
+      width: 100%;
+      font-weight: bold;
+       margin-top: 30px !important; 
+    }
+.table.table-bordered th, 
+.table.table-bordered td {
+  border: 1px solid #d3d3d3 !important;   /* Force visible black borders */
+}
+.table.table-bordered {
+  border: 1px solid #d3d3d3 !important;   /* Outer border */
+  border-collapse: collapse;
+}
