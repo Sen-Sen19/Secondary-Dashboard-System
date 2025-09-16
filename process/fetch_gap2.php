@@ -89,19 +89,30 @@ $processes = [
 ];
 
 $results = [];
-
 foreach ($processes as $proc) {
-    $sql = "
-        SELECT COUNT(*) AS machine_count
-        FROM [secondary_dashboard_db].[dbo].[section_backup]
-        WHERE [date] = ?
-          AND [section] = ?
-          AND LOWER([process]) = LOWER(?)
-          AND LOWER([details]) = 'actual running output'
-          AND [daily_result] > 0;
-    ";
+    if (strtolower($section) === 'overall') {
+        $sql = "
+            SELECT COUNT(*) AS machine_count
+            FROM [secondary_dashboard_db].[dbo].[section_backup]
+            WHERE [date] = ?
+              AND LOWER([process]) = LOWER(?)
+              AND LOWER([details]) = 'actual running output'
+              AND [daily_result] > 0;
+        ";
+        $params = [$date, $proc];
+    } else {
+        $sql = "
+            SELECT COUNT(*) AS machine_count
+            FROM [secondary_dashboard_db].[dbo].[section_backup]
+            WHERE [date] = ?
+              AND [section] = ?
+              AND LOWER([process]) = LOWER(?)
+              AND LOWER([details]) = 'actual running output'
+              AND [daily_result] > 0;
+        ";
+        $params = [$date, $section, $proc];
+    }
 
-    $params = [$date, $section, $proc];
     $stmt = sqlsrv_query($conn, $sql, $params);
 
     if ($stmt && $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {

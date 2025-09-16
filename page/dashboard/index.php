@@ -65,14 +65,22 @@
 
     }
 
-    .custom-containerhalf {
-      background-color: rgb(255, 255, 255);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
-      height: 250px;
+.custom-containerhalf {
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+  gap: 10px; /* spacing between dropdowns and checkboxes */
+  padding: 10px;
+  background: #f8f9fa; /* optional styling */
+  border-radius: 8px;
+  min-height: 150px; /* optional minimum height */
+}
 
-    }
-
+/* Make #machine_no flexible and wrap items if many */
+#machine_no {
+  display: flex;
+  flex-wrap: wrap; /* wrap checkboxes to next line if too many */
+  gap: 5px;
+}
 
 
     .persection-container {
@@ -414,18 +422,28 @@
       </div>
     </div>
   </div>
+<style>
+.dropdown-menu {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 #f1f1f1;
+}
 
+.dropdown-menu::-webkit-scrollbar {
+  width: 6px;
+}
 
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
 
-
-
-
-
-
-
-
-
+</style>
   <!-- -----------------------------------------------DRILL-DOWN PER PROCESS ----------------------------------------------- -->
 
   <!-- Division Bar -->
@@ -1233,7 +1251,11 @@
 
   <!-- -----------------------------------------------ACTUAL JPH And OUTPUT----------------------------------------------->
 
-
+<style>
+  #machine_no .form-check-label {
+    color: black;
+  }
+</style>
 
   <!-- Division Bar -->
   <div class="container-fluid">
@@ -1266,17 +1288,19 @@
 
           </select>
           <!-- Machine No Dropdown -->
-          <select name="machine_no" id="machine_no" class="form-select mb-2">
-            <option disabled selected value="">Select Machine No</option>
 
-            <!-- Add more machines as needed -->
-          </select>
+
 
 
           <!-- Shift Dropdown -->
           <select name="shift" id="shift" class="form-select mb-2">
             <option disabled selected value="">Select Shift</option>
           </select>
+<div id="machine_no" class="mb-2">
+  <label id="machineTitle" class="form-label text-muted">Machines (select shift first)</label>
+  <!-- Machines checkboxes will be appended here -->
+</div>
+
         </div>
         <div class="col-md-12 d-flex justify-content-end mt-2">
           <button type="submit" class="btn btn-primary">Generate</button>
@@ -1311,12 +1335,12 @@
 
 
   <script src="plugins/js/highcharts.js"></script>
-  <script src="https://code.highcharts.com/modules/exporting.js"></script>
-  <script src="https://code.highcharts.com/modules/export-data.js"></script>
-  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script src="plugins/js/exporting.js"></script>
+  <script src="plugins/js/export-data.js"></script>
+  <script src="plugins/js/accessibility.js"></script>
 
   <script>
-
+    // ===========================================ACTUAL JPH AND OUTPUT===========================================
 document.addEventListener('DOMContentLoaded', function () {
   const sectionSelect   = document.getElementById('sectionSelect');
   const processSelect   = document.getElementById('process');
@@ -1324,25 +1348,29 @@ document.addEventListener('DOMContentLoaded', function () {
   const shiftSelect     = document.getElementById('shift');
   const dateInput       = document.getElementById('dateInput');
   const generateBtn     = document.querySelector('.btn-primary');
-  const actualJPHDisplay = document.getElementById('actualJPHDisplay');
 
-  function resetDropdowns(ids) {
+  // ------------------- Helpers -------------------
+function resetDropdowns(ids) {
     ids.forEach(id => {
-      const sel = document.getElementById(id);
-      sel.innerHTML = `<option disabled selected value="">Select ${id.replace('_', ' ').toUpperCase()}</option>`;
+        const sel = document.getElementById(id);
+        if (sel.tagName === 'SELECT') {
+            sel.innerHTML = `<option disabled selected value="">Select ${id.replace('_',' ').toUpperCase()}</option>`;
+        } else if (id === 'machine_no') {
+            // Remove only existing checkboxes, keep the label
+            const checkboxes = sel.querySelectorAll('.form-check');
+            checkboxes.forEach(cb => cb.remove());
+        }
     });
-  }
+}
 
+  // ------------------- Fetch Functions -------------------
   function fetchSectionsByDate(date) {
     fetch(`../../process/dashboard_fetch_section.php?date=${date}`)
       .then(r => r.json())
       .then(data => {
         sectionSelect.innerHTML = '<option value="">Select SECTION</option>';
-        resetDropdowns(['process','machine_no','shift']);
-        data.forEach(sec => {
-          const o = new Option(sec, sec);
-          sectionSelect.append(o);
-        });
+        resetDropdowns(['process','shift','machine_no']);
+        data.forEach(sec => sectionSelect.append(new Option(sec, sec)));
       })
       .catch(console.error);
   }
@@ -1352,38 +1380,95 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(r => r.json())
       .then(data => {
         processSelect.innerHTML = '<option disabled selected value="">Select Process</option>';
-        resetDropdowns(['machine_no','shift']);
+        resetDropdowns(['shift','machine_no']);
         data.forEach(pr => processSelect.append(new Option(pr, pr)));
       })
       .catch(console.error);
   }
 
-  function fetchMachines(date, section, process) {
-    fetch(`../../process/dashboard_fetch_machine.php?date=${date}&section=${encodeURIComponent(section)}&process=${encodeURIComponent(process)}`)
-      .then(r => r.json())
-      .then(data => {
-        machineNoSelect.innerHTML = '<option disabled selected value="">Select Machine No</option>';
-        data.forEach(m => machineNoSelect.append(new Option(m, m)));
-      })
-      .catch(console.error);
-  }
-
   function fetchShifts(date, section, process) {
-    fetch(`../../process/dashboard_fetch_shift.php?date=${date}&section=${encodeURIComponent(section)}&process=${encodeURIComponent(process)}`)
+    fetch(`../../process/dashboard_fetch_shift.php?date=${encodeURIComponent(date)}&section=${encodeURIComponent(section)}&process=${encodeURIComponent(process)}`)
       .then(r => r.json())
       .then(data => {
         shiftSelect.innerHTML = '<option disabled selected value="">Select Shift</option>';
+        resetDropdowns(['machine_no']);
         data.forEach(s => shiftSelect.append(new Option(s, s)));
       })
       .catch(console.error);
   }
+function fetchMachines(date, section, process, shift) {
+    const title = document.getElementById('machineTitle');
+    title.textContent = 'Machines'; // Change text after shift is selected
 
-  // Init
+    // Only remove previous checkboxes, keep the label
+    const existingCheckboxes = machineNoSelect.querySelectorAll('.form-check');
+    existingCheckboxes.forEach(cb => cb.remove());
+
+    fetch(`../../process/dashboard_fetch_machine.php?date=${encodeURIComponent(date)}&section=${encodeURIComponent(section)}&process=${encodeURIComponent(process)}&shift=${encodeURIComponent(shift)}`)
+      .then(r => r.json())
+      .then(data => {
+        data.forEach(m => {
+          const div = document.createElement('div');
+          div.classList.add('form-check');
+          div.innerHTML = `
+            <input class="form-check-input" type="checkbox" value="${m}" id="machine_${m}">
+            <label class="form-check-label" for="machine_${m}">${m}</label>
+          `;
+          machineNoSelect.appendChild(div);
+        });
+      })
+      .catch(console.error);
+}
+
+  // ------------------- Chart Fetch -------------------
+  function fetchWeeklyChartData(date, section, process, machines, shift) {
+    const url = `../../process/dashboard_fetch_weekly_data.php?date=${encodeURIComponent(date)}&section=${encodeURIComponent(section)}&process=${encodeURIComponent(process)}&machine_no=${encodeURIComponent(machines)}&shift=${encodeURIComponent(shift)}`;
+    fetch(url)
+      .then(res => res.json())
+      .then(({ dates, actual_jph, actual_output }) => {
+        const jphSeries = machines ? actual_jph : [actual_jph[0]];
+        const outputSeries = machines ? actual_output : [actual_output[0]];
+        const jphTitle = machines ? 'JPH per Machine No (Last 7 Days)' : 'JPH Average (Last 7 Days)';
+        const outputTitle = machines ? 'Actual Output per Machine No (Last 7 Days)' : 'Total Actual Output (Last 7 Days)';
+
+        renderHighchart('weeklyjphChart', jphTitle, dates, jphSeries, ['#12e2ed','#0078ff']);
+        renderHighchart('weeklyoutputChart', outputTitle, dates, outputSeries, ['#66f054ff','#28a745']);
+      })
+      .catch(console.error);
+  }
+
+  function renderHighchart(containerId, title, categories, machineData, gradientColors) {
+    Highcharts.chart(containerId, {
+      chart: { type: 'column' },
+      title: { text: title },
+      xAxis: { categories, crosshair: true },
+      yAxis: { min: 0, title: { text: 'Value' } },
+      plotOptions: {
+        column: {
+          borderWidth: 0,
+          dataLabels: { enabled: true, inside: true, style: { fontWeight: 'bold', color: 'white', textOutline: 'none' } }
+        }
+      },
+      series: machineData.map(machine => ({
+        name: machine.machine,
+        data: machine.values,
+        color: {
+          linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+          stops: [
+            [0, gradientColors[0]],
+            [1, gradientColors[1]]
+          ]
+        }
+      }))
+    });
+  }
+
+  // ------------------- Init -------------------
   const today = new Date().toISOString().slice(0,10);
   dateInput.value = today;
   fetchSectionsByDate(today);
 
-  // Listeners
+  // ------------------- Event Listeners -------------------
   dateInput.addEventListener('change', e => fetchSectionsByDate(e.target.value));
 
   sectionSelect.addEventListener('change', () => {
@@ -1393,104 +1478,91 @@ document.addEventListener('DOMContentLoaded', function () {
   processSelect.addEventListener('change', () => {
     const d = dateInput.value, s = sectionSelect.value, p = processSelect.value;
     if (d && s && p) {
-      fetchMachines(d, s, p);
-      fetchShifts(d, s, p);
+      fetchShifts(d, s, p); // fetch shifts when process is selected
     }
   });
-generateBtn.addEventListener('click', () => {
-  const d  = dateInput.value;
-  const s  = sectionSelect.value;
-  const p  = processSelect.value;
-  const m  = machineNoSelect.value;
-  const sh = shiftSelect.value;
 
-  if (!s && !d && !p && !m && !sh) {
-    alert("Please select at least one filter (e.g., section)");
-    return;
+  shiftSelect.addEventListener('change', () => {
+    const d = dateInput.value,
+          s = sectionSelect.value,
+          p = processSelect.value,
+          sh = shiftSelect.value;
+    if (d && s && p && sh) {
+      fetchMachines(d, s, p, sh); // fetch machines after shift is selected
+    }
+  });
+
+  generateBtn.addEventListener('click', () => {
+    const d = dateInput.value,
+          s = sectionSelect.value,
+          p = processSelect.value,
+          selectedMachines = Array.from(document.querySelectorAll('#machine_no input[type="checkbox"]:checked'))
+                                  .map(cb => cb.value),
+          sh = shiftSelect.value;
+
+    if (!s && !d && !p && selectedMachines.length === 0 && !sh) {
+      alert("Please select at least one filter (e.g., section)");
+      return;
+    }
+
+    fetchWeeklyChartData(d, s, p, selectedMachines.join(','), sh);
+  });
+
+
+
+  // ------------------- Chart Functions -------------------
+function fetchWeeklyChartData(date, section, process, machines, shift) {
+    const url = `../../process/dashboard_fetch_weekly_data.php?` +
+                `date=${encodeURIComponent(date)}` +
+                `&section=${encodeURIComponent(section)}` +
+                `&process=${encodeURIComponent(process)}` +
+                `&machine_no=${encodeURIComponent(machines)}` +
+                `&shift=${encodeURIComponent(shift)}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(({ dates, actual_jph, actual_output }) => {
+            const jphSeries = machines ? actual_jph : [actual_jph[0]];
+            const outputSeries = machines ? actual_output : [actual_output[0]];
+
+            // Determine chart titles
+            const jphTitle = machines ? 'JPH per Machine No (Last 7 Days)' : 'JPH Average (Last 7 Days)';
+            const outputTitle = machines ? 'Actual Output per Machine No (Last 7 Days)' : 'Total Actual Output (Last 7 Days)';
+
+            renderHighchart('weeklyjphChart', jphTitle, dates, jphSeries, ['#12e2ed','#0078ff']);
+            renderHighchart('weeklyoutputChart', outputTitle, dates, outputSeries, ['#66f054ff','#28a745']);
+        })
+        .catch(console.error);
+}
+
+  function renderHighchart(containerId, title, categories, machineData, gradientColors) {
+    Highcharts.chart(containerId, {
+        chart: { type: 'column' },
+        title: { text: title },
+        xAxis: { categories, crosshair: true },
+        yAxis: { min: 0, title: { text: 'Value' } },
+        plotOptions: {
+            column: {
+                borderWidth: 0,
+                dataLabels: { enabled: true, inside: true, style: { fontWeight: 'bold', color: 'white', textOutline: 'none' } }
+            }
+        },
+        series: machineData.map(machine => ({
+            name: machine.machine,
+            data: machine.values,
+            color: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, gradientColors[0]],
+                    [1, gradientColors[1]]
+                ]
+            }
+        }))
+    });
   }
 
-  const url = `../../process/dashboard_fetch_actual_jph.php?` +
-              `date=${encodeURIComponent(d)}` +
-              `&section=${encodeURIComponent(s)}` +
-              `&process=${encodeURIComponent(p)}` +
-              `&machine_no=${encodeURIComponent(m)}` +
-              `&shift=${encodeURIComponent(sh)}`;
-
-  fetch(url)
-    .then(r => r.json())
-    .then(({ actual_jph, actual_output }) => {
-      console.log('Actual JPH:', actual_jph);
-      console.log('Actual Running Output:', actual_output);
-    fetchWeeklyChartData(d, s, p, m, sh); // draw the chart
-
-    })
-    .catch(console.error);
 });
 
-});
-// Function to fetch 7-day history of Actual JPH and Output
-function fetchWeeklyChartData(date, section, process, machine, shift) {
-  const url = `../../process/dashboard_fetch_weekly_data.php?` +
-              `date=${encodeURIComponent(date)}` +
-              `&section=${encodeURIComponent(section)}` +
-              `&process=${encodeURIComponent(process)}` +
-              `&machine_no=${encodeURIComponent(machine)}` +
-              `&shift=${encodeURIComponent(shift)}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(({ dates, actual_jph, actual_output }) => {
-      renderHighchart('weeklyjphChart', 'JPH Average (Last 7 Days)', dates, actual_jph, '#1E90FF');
-      renderHighchart('weeklyoutputChart', 'Total Actual Output (Last 7 Days)', dates, actual_output, '#28a745');
-    }) 
-    .catch(console.error);
-}
-
-// Render highchart
-function renderHighchart(containerId, title, categories, data, color) {
-  Highcharts.chart(containerId, {
-    chart: {
-      type: 'area'
-    },
-    title: {
-      text: title
-    },
-    xAxis: {
-      categories: categories,
-      crosshair: true
-    },
-    yAxis: {
-      min: 0,
-      title: {
-        text: 'Value'
-      }
-    },
-    series: [{
-      name: title,
-      data: data,
-      color: color
-    }]
-  });
-}
-
-
-    // -----------------------------------------------Select Date-----------------------------------------------
-
-
-    let today = new Date().toISOString().slice(0, 10);
-    const dateInput = document.getElementById('dateInput');
-
-    dateInput.value = today;
-    console.log(dateInput.value);
-
-    // Listen for changes and update value + log it
-    dateInput.addEventListener('change', (event) => {
-      const selectedDate = event.target.value;
-      console.log(selectedDate);
-      // If you want to explicitly update the value (though it's automatic), you can do:
-      dateInput.value = selectedDate;
-
-    });
     // -----------------------------------------------Fetch-----------------------------------------------
 
     document.addEventListener("DOMContentLoaded", function () {

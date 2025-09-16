@@ -1,19 +1,26 @@
 <?php
 include 'conn.php';
 
-if (!isset($_GET['date']) || !isset($_GET['section']) || !isset($_GET['process'])) {
+// Ensure required parameters exist
+if (!isset($_GET['date']) || !isset($_GET['section']) || !isset($_GET['process']) || !isset($_GET['shift'])) {
     echo json_encode([]);
     exit;
 }
 
-$date = $_GET['date'];
+$date    = $_GET['date'];
 $section = $_GET['section'];
 $process = $_GET['process'];
+$shift   = $_GET['shift']; // new parameter
 
+// Update query to filter by shift
 $sql = "SELECT DISTINCT machine_no
         FROM [dbo].[section_backup]
-        WHERE CAST([date] AS DATE) = ? AND section = ? AND process = ?";
-$params = [$date, $section, $process];
+        WHERE CAST([date] AS DATE) = ?
+          AND section = ?
+          AND process = ?
+          AND nsds = ?"; // nsds column stores shift info
+$params = [$date, $section, $process, $shift];
+
 $stmt = sqlsrv_query($conn, $sql, $params);
 
 $machines = [];
